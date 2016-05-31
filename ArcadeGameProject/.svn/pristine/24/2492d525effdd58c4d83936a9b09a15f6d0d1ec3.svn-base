@@ -1,0 +1,263 @@
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+/**
+ * A nobbin in the digger game tires to kill the hero and can only move in paths
+ * that have been cleared.
+ *
+ * @author goldacbj. Created Feb 10, 2015.
+ */
+public class Nobbin extends Entity {
+	private static final int SPEED = 7;
+	private boolean isAlive;
+
+	private int timer = 2;
+
+	private int startingX;
+	private int startingY;
+	private Entity last;
+	private ArrayList<Entity> lasts = new ArrayList<>();
+
+	/**
+	 * constructs the nobbin in the current positon
+	 *
+	 * @param startingPositon
+	 */
+	public Nobbin(int x, int y) {
+		super(x, y);
+		this.startingX = x;
+		this.startingY = y;
+		this.isAlive = true;
+		this.color = Color.red;
+		this.last = new Entity(x, y);
+		this.lasts.add(new Entity(x, y));
+
+		try {
+			this.image = ImageIO.read(new File(Main.path + "images/nobbin.png"));
+		} catch (IOException exception) {
+			System.out.println("ERROR: closed money image not found");
+		}
+	}
+
+	public void updateNobbin(ArrayList<Empty> empties, Hero hero) {
+		try {
+			this.image = ImageIO.read(new File(Main.path + "images/nobbin.png"));
+		} catch (IOException exception) {
+			System.out.println("ERROR: closed money image not found");
+		}
+		
+		if (this.timer == 0) {
+
+			if (neighborCount(empties) == 1) {
+				int tempX = this.x;
+				int tempY = this.y;
+				this.x = this.last.getX();
+				this.y = this.last.getY();
+
+				this.last = new Entity(tempX, tempY);
+				
+				if(this.last.Equals(this)){
+					Entity e = getNext(empties);
+					this.x = e.getX();
+					this.y = e.getY();
+					
+				}
+
+			} else if (neighborCount(empties) == 2) {
+
+				Entity next = getNext(empties);
+				this.last = new Entity(this.x, this.y);
+				this.x = next.getX();
+				this.y = next.getY();
+
+			} else {
+
+				Entity next = choosePath(empties);
+				this.lasts.add(next);
+				this.last = new Entity(this.x, this.y);
+
+				this.x = next.getX();
+				this.y = next.getY();
+
+			}
+
+			if (this.lasts.size() > 500) {
+				this.lasts.remove(this.lasts.size() - 1);
+
+			}
+
+			if (this.x == hero.getX() && this.y == hero.getY()) {
+				hero.died();
+
+			}
+
+			this.timer = 0;
+
+		} else {
+
+			this.timer--;
+		}
+
+		
+		if(this.lasts.size()>50){
+			this.lasts.clear();
+		}
+
+
+	}
+
+	public Entity choosePath(final ArrayList<Empty> empties) {
+		ArrayList<Empty> paths = new ArrayList<>();
+
+		for (Empty e : empties) {
+			boolean isLast = false;
+
+			for (Entity e2 : this.lasts) {
+				if (e.Equals(e2)) {
+					isLast = true;
+
+				}
+			}
+
+			if (!e.Equals(this.last) && !isLast) {
+				if (e.Equals(new Empty(this.x - 1, this.y))) {
+					paths.add(e);
+
+				} else if (e.Equals(new Empty(this.x + 1, this.y))) {
+					paths.add(e);
+
+				} else if (e.Equals(new Empty(this.x, this.y - 1))) {
+					paths.add(e);
+
+				} else if (e.Equals(new Empty(this.x, this.y + 1))) {
+					paths.add(e);
+
+				}
+
+			}
+
+		}
+
+		if (paths.size() == 0) {
+			this.lasts.remove(removeALast());
+
+			return choosePath(empties);
+		}
+
+		return paths.get((int) (Math.random() * (paths.size() - 1)));
+
+	}
+	
+	public Entity removeALast(){
+		ArrayList<Entity> e = new ArrayList<>();
+		for(Entity l: this.lasts){
+			if(l.Equals(new Entity(this.x + 1, this.y))){
+				e.add(l);
+				
+			}else if(l.Equals(new Entity(this.x - 1, this.y))){
+				e.add(l);
+				
+			}else if(l.Equals(new Entity(this.x, this.y + 1))){
+				e.add(l);
+				
+			}else if(l.Equals(new Entity(this.x, this.y - 1))){
+				e.add(l);
+				
+			}
+			
+		}
+		
+		return e.get((int) (Math.random() * (e.size() - 1)));
+		
+	}
+
+	public Entity getNext(ArrayList<Empty> empties) {
+		for (Empty e : empties) {
+			if (!e.Equals(this.last)) {
+				if (e.Equals(new Empty(this.x - 1, this.y))) {
+
+					return e;
+				}
+
+				if (e.Equals(new Empty(this.x + 1, this.y))) {
+
+					return e;
+				}
+
+				if (e.Equals(new Empty(this.x, this.y - 1))) {
+
+					return e;
+				}
+
+				if (e.Equals(new Empty(this.x, this.y + 1))) {
+
+					return e;
+				}
+
+			}
+
+		}
+
+		return null;
+
+	}
+
+	public int neighborCount(ArrayList<Empty> empties) {
+		int neighbors = 0;
+
+		if (isEmpty(empties, this.x + 1, this.y)) {
+			neighbors++;
+
+		}
+
+		if (isEmpty(empties, this.x - 1, this.y)) {
+			neighbors++;
+
+		}
+
+		if (isEmpty(empties, this.x, this.y + 1)) {
+			neighbors++;
+
+		}
+
+		if (isEmpty(empties, this.x, this.y - 1)) {
+			neighbors++;
+
+		}
+
+		return neighbors;
+	}
+
+	public void updatePosition(int newX, int newY) {
+		this.x = newX;
+		this.y = newY;
+
+	}
+
+	public Point2D getPosition() {
+		Point2D p = new Point2D.Double(this.x, this.y);
+
+		return p;
+	}
+
+	public boolean isAlive() {
+		return this.isAlive;
+	}
+
+	public void dead() {
+		this.isAlive = false;
+
+	}
+
+	public void resetPositoin() {
+		this.x = this.startingX;
+		this.y = this.startingY;
+
+	}
+
+}

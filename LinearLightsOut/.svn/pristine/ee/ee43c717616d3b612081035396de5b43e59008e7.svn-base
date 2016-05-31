@@ -1,0 +1,36 @@
+package linearLightsOut;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+/**
+ * Runs the Linear Lights Out application.
+ * 
+ * @author Brendan Goldacker. Created Jan 18, 2010.
+ */
+public class LinearMain {
+
+	/**
+	 * Starts here.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		String nButtonsString = JOptionPane
+				.showInputDialog("How many buttons would you like?");
+		int nButtons = Integer.parseInt(nButtonsString);
+		JFrame myFrame = new JFrame();
+		// you'll want to think about how you want to manage the state of the game
+		//also you want to add some buttons and stuff
+		myFrame.getDefaultCloseOperation();
+		myFrame.setVisible(true);
+		
+		//TODO: create a joption to ask how many lights
+		
+		//TODO: create a game with num of ligths
+		
+		//TODO: redraw the state of the game
+		
+		
+	}
+}

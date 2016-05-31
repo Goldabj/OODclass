@@ -1,0 +1,40 @@
+/**
+ * Has a staic method for returing either true, or false if exactly two of the
+ * given three numbers is even. (HW1.twoEven) Has a main method that tests the
+ * two even method
+ *
+ * @author goldacbj. Created Dec 3, 2014.
+ */
+public class HW1 {
+	/**
+	 * compare three numbers to see if exactly two are even
+	 */
+	public static void main(String[] args) {
+		/**
+		 * calls the twoEven function
+		 */
+		System.out.println(twoEven(3, 2, 6));
+		System.out.println(twoEven(2, 4, 6));
+		System.out.println(twoEven(3, 99, 100));
+	}
+
+	public static boolean twoEven(int one, int two, int three) {
+		/**
+		 * returns true if two of the three given numbers are even otherwise, it
+		 * returns false
+		 * 
+		 * @param one
+		 *            , two, three
+		 * @return true or false
+		 */
+		if (one % 2 == 0 && two % 2 == 0 && three % 2 == 1) {
+			return true;
+		} else if (one % 2 == 0 && three % 2 == 0 && two % 2 == 1) {
+			return true;
+		} else if (two % 2 == 0 && three % 2 == 0 && one % 2 == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}

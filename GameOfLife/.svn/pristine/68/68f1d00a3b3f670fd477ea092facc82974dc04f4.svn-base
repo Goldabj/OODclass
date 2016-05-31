@@ -1,0 +1,423 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+/**
+ * This class represents the game board. It can draw a graphical rendering of
+ * its current state and can calculate its next state.
+ * 
+ * @author TODO 0: [YOUR NAMES HERE]. Created Sep 24, 2008.
+ */
+public class GameOfLife extends JComponent {
+	private static final int MAX_ROWS = 90;
+	private static final int MAX_COLUMNS = 90;
+	private static final double DOT_SIZE = 7;
+	private Boolean[][] gameBoard;
+
+	/**
+	 * Constructs a new game board from the list of initially occupied
+	 * coordinates.
+	 * 
+	 * @param initialCells
+	 */
+	public GameOfLife(ArrayList<Coordinates> initialCells) {
+		// intitalizs the gameBoard with all false values
+		this.gameBoard = new Boolean[MAX_ROWS][MAX_COLUMNS];
+		for (int i = 0; i < this.gameBoard.length; i++) {
+			for (int j = 0; j < this.gameBoard[i].length; j++) {
+				this.gameBoard[i][j] = false;
+			}
+		}
+		// intitalizes the gameboard with true at initialCell positions
+		for (int c = 0; c < initialCells.size(); c++) {
+			this.gameBoard[initialCells.get(c).getRow()][initialCells.get(c)
+					.getColumn()] = true;
+		}
+
+	}
+
+	/**
+	 * @param row
+	 * @param column
+	 * @return whether or not the square in the given row and column is occupied
+	 */
+	public boolean isOccupied(int row, int column) {
+		if (this.gameBoard[row][column] == true) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Counts the number of occupied cells around the given square.
+	 * 
+	 * @param row
+	 * @param column
+	 * @return the number of occupied cells
+	 */
+	@SuppressWarnings("boxing")
+	public int getNeighborCount(int row, int column) {
+		int count = 0;
+		if (row == 0 || row == MAX_ROWS - 1 || column == 0
+				|| column == MAX_COLUMNS - 1) {
+			if (row == 0) {
+				/*
+				 * upper left corner
+				 */
+				if (column == 0) {
+					/*
+					 * normal cases
+					 */
+					if (this.gameBoard[row][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][column] == true) {
+						count++;
+					}
+					/*
+					 * extended to left
+					 */
+					if (this.gameBoard[row][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[MAX_ROWS - 1][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					/*
+					 * exended to right
+					 */
+					if (this.gameBoard[MAX_ROWS - 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[MAX_ROWS - 1][column + 1] == true) {
+						count++;
+					}
+					return count;
+				}
+				/*
+				 * Upper right corner
+				 */
+				if (column == MAX_COLUMNS - 1) {
+					/*
+					 * normal cases
+					 */
+					if (this.gameBoard[row + 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][column - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][column - 1] == true) {
+						count++;
+					}
+					/*
+					 * extended to the right
+					 */
+					if (this.gameBoard[row + 1][0] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][0] == true) {
+						count++;
+					}
+					if (this.gameBoard[MAX_ROWS - 1][0] == true) {
+						count++;
+					}
+					/*
+					 * extended up
+					 */
+					if (this.gameBoard[MAX_ROWS - 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[MAX_ROWS - 1][column - 1] == true) {
+						count++;
+					}
+					return count;
+
+				}
+				if (this.gameBoard[row][column + 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[row][column - 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[row + 1][column] == true) {
+					count++;
+				}
+				if (this.gameBoard[row + 1][column + 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[row + 1][column - 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[MAX_ROWS - 1][column] == true) {
+					count++;
+				}
+				if (this.gameBoard[MAX_ROWS - 1][column + 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[MAX_ROWS - 1][column - 1] == true) {
+					count++;
+				}
+				return count;
+
+			}
+			/*
+			 * Bottom Row, not corner
+			 */
+			/**
+			 * TODO make this work
+			 */
+			if (row == MAX_ROWS - 1) {
+				if (column == 0) {
+					if (this.gameBoard[row - 1][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][column + 1] == true) {
+						count++;
+					}
+					/*
+					 * 
+					 */
+					if (this.gameBoard[0][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[0][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[0][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					/*
+					 * 
+					 */
+					if (this.gameBoard[row][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					return count;
+				}
+
+				/*
+				 * Bottom row, right corner
+				 */
+				if (column == MAX_COLUMNS - 1) {
+					if (this.gameBoard[row - 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][column - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][column - 1] == true) {
+						count++;
+					}
+					/*
+					 * cells that extend off the grid and loop back to the right
+					 * side
+					 */
+					if (this.gameBoard[row - 1][0] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][0] == true) {
+						count++;
+					}
+					if (this.gameBoard[0][0] == true) {
+						count++;
+					}
+					/*
+					 * cells that extend off the grid and loop back to the top
+					 */
+					if (this.gameBoard[0][column - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[0][column] == true) {
+						count++;
+					}
+					return count;
+				}
+				if (this.gameBoard[row][column - 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[row][column + 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[row - 1][column + 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[row - 1][column] == true) {
+					count++;
+				}
+				if (this.gameBoard[row - 1][column - 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[0][column - 1] == true) {
+					count++;
+				}
+				if (this.gameBoard[0][column] == true) {
+					count++;
+				}
+				if (this.gameBoard[0][column + 1] == true) {
+					count++;
+				}
+				return count;
+			}
+			/*
+			 * Bottom Row, left Column
+			 */
+			if (column == 0) {
+				if (row != 0 && row != MAX_ROWS - 1) {
+					if (this.gameBoard[row - 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][column + 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][MAX_COLUMNS - 1] == true) {
+						count++;
+					}
+					return count;
+				}
+			}
+			/*
+			 * Rightmost Column
+			 */
+			if (column == MAX_COLUMNS - 1) {
+				if (row != 0 && row != MAX_ROWS) {
+					if (this.gameBoard[row + 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][column] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][column - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][column - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][column - 1] == true) {
+						count++;
+					}
+					if (this.gameBoard[row - 1][0] == true) {
+						count++;
+					}
+					if (this.gameBoard[row][0] == true) {
+						count++;
+					}
+					if (this.gameBoard[row + 1][0] == true) {
+						count++;
+					}
+					return count;
+				}
+			}
+		}
+		if (this.gameBoard[row + 1][column] == true) {
+			count++;
+		}
+		if (this.gameBoard[row - 1][column] == true) {
+			count++;
+		}
+		if (this.gameBoard[row][column + 1] == true) {
+			count++;
+		}
+		if (this.gameBoard[row][column - 1] == true) {
+			count++;
+		}
+		if (this.gameBoard[row + 1][column + 1] == true) {
+			count++;
+		}
+		if (this.gameBoard[row + 1][column - 1] == true) {
+			count++;
+		}
+		if (this.gameBoard[row - 1][column + 1] == true) {
+			count++;
+		}
+		if (this.gameBoard[row - 1][column - 1] == true) {
+			count++;
+		}
+		return count;
+
+	}
+
+	/**
+	 * Updates the state of this game board for the next generation.
+	 */
+	public void nextGeneration() {
+		// creates an identical gameBoard
+		Boolean[][] tempBoard = new Boolean[MAX_ROWS][MAX_COLUMNS];
+		for (int i = 0; i < this.gameBoard.length; i++) {
+			for (int j = 0; j < this.gameBoard[0].length; j++) {
+				tempBoard[i][j] = this.gameBoard[i][j];
+			}
+		}
+		/*
+		 * checks the condtions of the gameOfLife gameBoard, then changes the
+		 * state of the tempBoard
+		 */
+		for (int r = 0; r < tempBoard.length; r++) {
+			for (int c = 0; c < tempBoard[0].length; c++) {
+				if (getNeighborCount(r, c) >= 4) {
+					tempBoard[r][c] = false;
+				}
+				if (getNeighborCount(r, c) == 3) {
+					tempBoard[r][c] = true;
+				}
+				if (getNeighborCount(r, c) <= 1) {
+					tempBoard[r][c] = false;
+				}
+			}
+		}
+		// change the state of the gameboard
+		this.gameBoard = tempBoard;
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
+		// creates all the cells as rectangles
+		for (int r = 0; r < this.gameBoard.length; r++) {
+			for (int c = 0; c < this.gameBoard[1].length; c++) {
+				Rectangle2D.Double cell = new Rectangle2D.Double(c
+						* GameOfLife.DOT_SIZE, r * GameOfLife.DOT_SIZE,
+						GameOfLife.DOT_SIZE, GameOfLife.DOT_SIZE);
+				// if the cell is occupied then it fills that cell in
+				if (isOccupied(r, c)) {
+					g2.setColor(Color.black);
+					g2.fill(cell);
+				}
+			}
+		}
+	}
+
+}

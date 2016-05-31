@@ -1,0 +1,32 @@
+import java.util.Scanner;
+
+
+public class FindFactors {
+
+	
+	public static void findFactors(long rangeStart, long rangeEnd, long numberToFindFactorsOf) {
+		System.out.println("Finding factors of " + numberToFindFactorsOf + " in range " + rangeStart + "-" + rangeEnd + " (range size " + (rangeEnd - rangeStart) + ")");
+		for(long i = rangeStart; i <= rangeEnd; i++) {
+			if(numberToFindFactorsOf % i == 0) {
+				System.out.println(i + " is a factor");
+			}
+
+		}
+	}
+	
+	public static void main(String[] args) {
+
+		System.out.println("Welcome to factor search!  Enter your query in the form NUMBER_TO_FACTOR MIN_RANGE MAX_RANGE NUMBER_OF_THREADS");
+		Scanner s = new Scanner(System.in);
+		long numberToFactor = s.nextLong();
+		long startRange = s.nextLong();
+		long endRange = s.nextLong();
+		long numberOfThreads = s.nextLong();
+		
+		findFactors(startRange,endRange,numberToFactor);
+		System.out.println("Factor finding complete");		
+		
+
+	}
+
+}

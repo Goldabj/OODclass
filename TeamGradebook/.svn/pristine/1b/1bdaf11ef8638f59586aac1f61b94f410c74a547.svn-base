@@ -1,0 +1,63 @@
+import java.util.ArrayList;
+
+
+public class Team {
+	private ArrayList<Student> team;
+	private String teamName;
+	
+	/**
+	 * 
+	 * initalized the team name and the memembers 
+	 * of the team
+	 *
+	 * @param teamName
+	 * @param members-- ArrayList of student members
+	 */
+	public Team(String teamName) {
+		this.teamName = teamName;
+		this.team = new ArrayList<Student>();
+	}
+	
+	public void addTeamMembers(ArrayList<Student> members) {
+		for(int i = 0; i < members.size(); i++) {
+			this.team.add(members.get(i));
+		}
+	}
+	
+	/**
+	 * 
+	 * adds a single member to a new team
+	 *
+	 * @param member
+	 */
+	public void addTeamMembers(Student member) {
+		this.team.add(member);
+	}
+	
+	/**
+	 * 
+	 * returns the name of the team
+	 *
+	 * @return
+	 */
+	public String getName() {
+		return this.teamName;
+	}
+	
+	/**
+	 * 
+	 * returns the student members of this team
+	 *
+	 * @return-- members
+	 */
+	public ArrayList<Student> getMembers() {
+		return this.team;
+	}
+	
+	public Student getStudent(int index) {
+		return this.team.get(index);
+	}
+	
+	// You'll need to add methods, constructors and fields here
+	
+}

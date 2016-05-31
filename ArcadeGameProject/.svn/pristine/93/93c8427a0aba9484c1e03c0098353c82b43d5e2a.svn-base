@@ -1,0 +1,140 @@
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+
+/**
+ * 
+ * The Hero of the digger game, he can move, collect gems and money
+ * and he can fire a gun
+ *
+ * @author goldacbj.
+ *         Created Feb 9, 2015.
+ */
+public class Hero extends Entity{
+	private boolean isAlive = true;
+	private int lives = 3;
+	private int startX;
+	private int startY;
+	private int xVelo = 0;
+	private int yVelo = 0;
+	private boolean dead;
+	private boolean isWeaponReady = true;
+	private static final int SPEED = 5;
+	String direction;
+	public Weapon weapon;
+	
+	/**
+	 * Consturcts the hero in a given position with three lives
+	 *
+	 */
+	public Hero(int startingX, int startingY) {
+		super(startingX, startingY);
+		this.startX = startingX;
+		this.startY = startingY;
+		this.direction = null;
+		this.color = Color.blue;
+		this.weapon = new Weapon(this.direction, this.getX(),this.getY());
+		try {
+			this.image = ImageIO.read(new File(Main.path + "images/face.jpg"));
+		} catch (IOException exception) {
+			System.out.println("ERROR: closed money image not found");
+		}
+	}
+	
+	public void updateHero(){
+		this.x += this.xVelo; 
+		this.y += this.yVelo;
+		
+		
+	}
+	
+	/**
+	 * returns if the hero is alive or not.
+	 *
+	 * @return
+	 */
+	public boolean isAlive() {
+		return this.isAlive;
+	}
+	
+	/**
+	 * returns the amount of lives the hero has left
+	 *
+	 * @return
+	 */
+	public int getLives() {
+		return this.lives;
+	}
+	
+	/**
+	 * removes a life from the hero
+	 *
+	 */
+	public void died() {
+		this.lives--;
+		this.isAlive = false;
+		
+	}
+
+	/**
+	 * fires the weapon if it is ready to use and in the direction of the hero.
+	 *
+	 */
+	public void fireWeapon() {
+		if(isWeaponLoaded()){
+			this.weapon.fired = true;		
+		}
+	}
+	/**
+	 * 
+	 * Gets direction of hero based upon its previous movements.
+	 *
+	 * @return
+	 */
+	public String getDirection(){
+		return this.direction;
+		
+	}
+	public void setDirection(String direction){
+		this.direction = direction;
+	}
+	
+	/**
+	 * returns true if the weapon has been recharged
+	 * 
+	 * @return
+	 */
+	public boolean isWeaponLoaded() {
+		return this.isWeaponReady;
+	}
+	
+	/**
+	 * resets the hero to his starting Positon
+	 *
+	 */
+	public void resetPosition() {
+		this.x = this.startX;
+		this.y = this.startY;
+		this.isAlive = true;
+	}
+	
+	public void setVelocity(int x, int y){
+		this.xVelo = x;
+		this.yVelo = y;		
+	}
+	
+//	/**
+//	 * sets the hero to the new starting position
+//	 *
+//	 * @param startingPositon
+//	 */
+//	public void setStartingPosition(int x, int y) {
+//		this.startX = x;
+//		this.startY = y;
+//	}
+	
+
+}

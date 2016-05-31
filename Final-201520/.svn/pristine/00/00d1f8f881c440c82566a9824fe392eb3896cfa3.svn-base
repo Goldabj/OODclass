@@ -1,0 +1,28 @@
+package rotatingshapes;
+
+import java.awt.Graphics2D;
+
+
+
+
+public class AnimationThread implements Runnable {
+	
+	private RotatingShape shape;
+	private RotatingShapesComponent component;
+	
+	public AnimationThread(RotatingShape shape, RotatingShapesComponent component) {
+		this.shape = shape;
+		this.component = component;
+	}
+	
+	
+	@Override
+	public void run() {
+		Graphics2D g2 = (Graphics2D) this.component.getGraphics();
+		g2.rotate(10);
+		this.shape.draw(g2);
+		this.component.repaint();
+		System.out.println("ending Thread");
+	}
+
+}

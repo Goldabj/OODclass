@@ -1,0 +1,66 @@
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+
+public class Entity {
+	protected int x;
+	protected int y;
+	protected Color color;
+	protected BufferedImage image;
+
+	
+	public Entity(int x, int y){
+		this.x = x;
+		this.y = y;
+		this.color = Color.black;
+	}
+
+	public int getX(){
+		
+		return this.x;
+	}
+	
+	public int getY(){
+		
+		return this.y;
+	}
+	
+	public Color getColor(){
+		
+		return this.color;
+	}
+	
+	public void move(int x2, int y2){
+		this.x += x2;
+		this.y += y2;
+		
+	}
+	
+	public BufferedImage getImage(){
+		
+		return this.image;
+	}
+	
+	public boolean Equals(Entity e){
+		if(e.getX() == this.x && e.getY() == this.y){
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean isEmpty(ArrayList<Empty> empties, int x, int y) {
+		for (Empty e : empties) {
+			if (e.getX() == x && e.getY() == y) {
+
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+	
+}

@@ -1,0 +1,37 @@
+import java.util.ArrayList;
+
+
+
+
+public class Empty extends Entity{	
+	private ArrayList<Empty> neighbors = new ArrayList<>();
+	
+	public Empty(int x, int y){
+		super(x,y);
+		
+	}
+	
+	public void setNeighbor(Empty empty){
+		this.neighbors.add(empty);
+		
+	}
+	
+	public ArrayList<Empty> getNeighbors(){
+		
+		return this.neighbors;
+	}
+	
+	public boolean isNeighbor(Empty empty){
+		for(Empty e: this.neighbors){
+			if(e.equals(empty)){
+				
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	
+
+}

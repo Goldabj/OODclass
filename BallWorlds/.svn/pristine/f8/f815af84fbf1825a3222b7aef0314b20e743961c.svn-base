@@ -1,0 +1,53 @@
+package ballworlds;
+
+import java.awt.Color;
+import java.awt.geom.Point2D;
+
+import util.Random;
+
+public class Expoloder extends AbstractBouncer {
+		
+	private double diameter;
+	private double sizeMax;
+
+	public Expoloder(BallEnvironment world) {
+		super(world);
+		this.diameter = 25;
+		this.sizeMax = this.diameter * (Random.randInterval(2, 10));
+	}
+	
+	public Expoloder(BallEnvironment world, Point2D centerPoint) {
+		super(world);
+		this.diameter = 25;
+		this.sizeMax = this.diameter * (Random.randInterval(2, 10));
+		super.setCenterPoint(centerPoint);
+	}
+
+	@Override
+	public Color getColor() {
+		return Color.CYAN;
+	}
+
+	@Override
+	public void updateSize() {
+		if(this.diameter >= this.sizeMax) {
+			super.die();
+			super.getWorld().addBall(new Expoloder(super.getWorld(), super.getCenterPoint()));
+			super.getWorld().addBall(new Expoloder(super.getWorld(), super.getCenterPoint()));
+		}
+		this.diameter++;
+		
+	}
+
+	@Override
+	public void updateColor() {
+		// stays the same color
+		
+	}
+
+	@Override
+	public double getDiameter() {
+		return this.diameter;
+	}
+
+}

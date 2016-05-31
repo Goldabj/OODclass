@@ -1,0 +1,50 @@
+package ballworlds;
+
+import java.awt.Color;
+import java.awt.geom.Point2D;
+
+import util.Random;
+
+public class Mover extends Ball {
+
+	private static final double DIAMETER = 25;
+	private double xVeloicty;
+	private double yVelocity;
+
+	public Mover(BallEnvironment world) {
+		super(world);
+		this.xVeloicty = Random.randInterval(-4, 4);
+		this.yVelocity = Random.randInterval(-4, 4);
+	}
+
+	@Override
+	public Color getColor() {
+		return Color.DARK_GRAY;
+	}
+
+	@Override
+	public void updatePosition() {
+		super.moveTo(new Point2D.Double(super.getCenterPoint().getX()
+				+ this.xVeloicty, super.getCenterPoint().getY()
+				+ this.yVelocity));
+
+	}
+
+	@Override
+	public void updateSize() {
+		// stays the same size
+
+	}
+
+	@Override
+	public void updateColor() {
+		// stays the same color
+
+	}
+
+	@Override
+	public double getDiameter() {
+		return DIAMETER;
+	}
+
+}

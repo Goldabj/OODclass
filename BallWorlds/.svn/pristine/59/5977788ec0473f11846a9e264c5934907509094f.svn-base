@@ -1,0 +1,29 @@
+package ballworlds;
+
+import util.Random;
+
+/**
+ * A ball that bounces off the walls.
+ * 
+ * @author Curt Clifton. Created Jan 22, 2011.
+ */
+public abstract class AbstractBouncer extends Ball {
+	private double velocityX;
+	private double velocityY;
+	
+	/**
+	 * Constructs a abstract bouncer in the given world.
+	 * 
+	 * @param world
+	 */
+	public AbstractBouncer(BallEnvironment world) {
+		super(world);
+		this.velocityX = Random.randInterval(-3, 3);
+		this.velocityY = Random.randInterval(-3, 3);
+	}
+	
+	@Override
+	public void updatePosition() {
+		
+	}
+}

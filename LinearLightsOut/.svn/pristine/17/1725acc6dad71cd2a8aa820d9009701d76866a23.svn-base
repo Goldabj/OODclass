@@ -1,0 +1,57 @@
+package linearLightsOut;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+public class LinearGameComponent extends JComponent {
+	protected JButton[] lightArray;
+
+	// TODO: draws the buttons on the frame-- new game button, quit button, lightButtons and adds actoins to them
+	public LinearGameComponent(int numberOfButtons) {
+		final JPanel lightButtons = new JPanel();
+		this.lightArray = new JButton[numberOfButtons];
+		for(int i = 0; i <= numberOfButtons; i++ ) {
+			JButton light = new JButton();
+			if(Math.random() <= 0.5) {
+				light.setText("X");
+			}else {
+				light.setText("O");
+			}
+			lightButtons.add(light); 
+			this.lightArray[i] = light;
+		}
+		class LightListener implements ActionListener {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JButton lightClicked = (JButton) e.getSource();
+				for(int i = 0; i < LinearGameComponent.this.lightArray.length; i ++) {
+					if(lightClicked == LinearGameComponent.this.lightArray[i]) {
+						
+					}
+				}
+			}
+			
+		// TODO: create the buttons to close the games and start a new game
+		}
+	}
+	// TODO: draws the ligths on the frame -- buttons with X or O
+	/**
+	 * 
+	 * changes the label of the button pressed, and changes the label
+	 * of the surrounding buttons 
+	 *
+	 * @param light -- JButton that is a light 
+	 * @param LightPanel -- a JPanel of only light buttons.
+	 */
+	public void changeLights(JButton light, JPanel LightPanel) {
+		
+	}
+	
+	// TODO: defines what the buttons do -- changes it and the neighbors labels
+	
+}

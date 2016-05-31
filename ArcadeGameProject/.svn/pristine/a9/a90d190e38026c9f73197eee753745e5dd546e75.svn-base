@@ -1,0 +1,69 @@
+import java.util.ArrayList;
+
+
+public class Path {
+	private int x;
+	private int y;
+	private Path lastBlock;
+	private ArrayList<Entity> path = new ArrayList<>();
+	
+	
+	public Path(int x, int y, ArrayList<Empty> empties){
+		this.x = x;
+		this.y = y;
+		
+		
+	}
+	
+	
+	
+	
+	public class ListNode<T>{
+		private T element = null;
+		private ListNode<T>[] next = new ListNode[4];
+		
+		public ListNode(T e, ListNode<T> n) {
+			this.setElement(e);
+			this.setNext(n);
+		}
+		
+		public ListNode(T e) {
+			this(e, null);
+			
+		}
+		
+		public ListNode(){
+			this(null, null);
+			
+		}
+		
+		public T getElement() {
+			return this.element;
+			
+		}
+		
+		public void setElement(T element) {
+			this.element = element;
+			
+		}
+		
+		public ListNode<T>[] getNext() {
+			return this.next;
+			
+		}
+		
+		public void setNext(ListNode<T> next) {
+			for(ListNode<T> l: this.next){
+				if(l == null){
+					l = next;
+					
+					break;
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+}

@@ -1,0 +1,119 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+
+
+/**
+ * Creates a face with 
+ *
+ * @author goldacbj.
+ *         Created Dec 17, 2014.
+ */
+public class Faces {
+	private double centerX;
+	private double centerY;
+	private double diameter;
+	private double angleOfFace;
+	private Color faceColor;
+	private Color outlineColor;
+	private Color eyeColor;
+	private Color mouthOutlineColor;
+	
+	/**
+	 * 
+	 * Consturcts a face object with the default parameters: a face centered
+	 * at (100, 100), diameteter of 50, colored yellow, with black eyes, outline color yellow,
+	 * and mouth outline color red.
+	 *
+	 */
+	public Faces() {
+		this.centerX = 100;
+		this.centerY = 100;
+		this.diameter = 100;
+		this.angleOfFace = 0;
+		this.faceColor = Color.YELLOW;
+		this.outlineColor = Color.YELLOW;
+		this.eyeColor = Color.BLACK;
+		this.mouthOutlineColor = Color.RED;
+	}
+	
+	/**
+	 * 
+	 * Contructs a face object with the given parameters.
+	 *
+	 * @param xPosition -- center of bounding box of the face in x direction
+	 * @param yPosition -- center of the boudnign box of face in y direction
+	 * @param diameter -- diamter of face
+	 * @param angleOfFace -- angle the face is drawn at
+	 * @param faceColor -- the fill color of the face
+	 * @param outlineColor -- the outline color of the face
+	 * @param eyeColor -- the fill color of the eyes
+	 * @param mouthOutlineColor -- the outline color of the mouth
+	 */
+	public Faces(double xPosition, double yPosition, double diameter, double angleOfFace, Color faceColor, Color outlineColor,
+				Color eyeColor, Color mouthOutlineColor) {
+		this.centerX= xPosition;
+		this.centerY = yPosition;
+		this.diameter = diameter;
+		this.angleOfFace = angleOfFace;
+		this.faceColor = faceColor;
+		this.outlineColor = outlineColor;
+		this.eyeColor = eyeColor;
+		this.mouthOutlineColor = mouthOutlineColor;
+	}
+	
+	/**
+	 * 
+	 * draws a face onto the given graphics2D object.
+	 *
+	 * @param graphics2
+	 */
+	public void drawOn(Graphics2D graphics2) {
+		//orientation of the face
+		graphics2.translate(this.centerX, this.centerY);
+		graphics2.rotate(this.angleOfFace * (Math.PI/180));
+		
+		//Circle for the face
+		double ellipseXPosition = - this.diameter/2;
+		double ellipseYPosition = - this.diameter/2;
+		Ellipse2D.Double face = new Ellipse2D.Double(ellipseXPosition, ellipseYPosition, this.diameter, this.diameter);
+		
+		//Eyes
+		double eyeRadius = (this.diameter/2) * .28;
+		double eyeCenterDistanceX = (.5*(this.diameter/2)*Math.cos(Math.PI / 4));
+		double eyeCenterDistanceY = (.5*(this.diameter/2)*Math.cos(Math.PI / 4));
+		Ellipse2D.Double leftEye = new Ellipse2D.Double(-eyeCenterDistanceX - eyeRadius, -eyeCenterDistanceY - eyeRadius, 
+														eyeRadius * 2, eyeRadius * 2);
+		Ellipse2D.Double rightEye = new Ellipse2D.Double(eyeCenterDistanceX - eyeRadius,
+														-eyeCenterDistanceY - eyeRadius, eyeRadius * 2, eyeRadius * 2);
+		
+		//mouth
+		double arcPositioning = (this.diameter - .7 * this.diameter)/2;
+		double mouthDiameter = this.diameter * .7;
+		Arc2D.Double mouth = new Arc2D.Double(ellipseXPosition + arcPositioning, ellipseYPosition + arcPositioning, 
+												mouthDiameter, mouthDiameter, -15.0, -150.0, Arc2D.CHORD);
+		
+		//draws the face with the color
+		graphics2.setStroke(new BasicStroke(5.0f));
+		graphics2.setColor(this.outlineColor);
+		graphics2.draw(face);
+		graphics2.setColor(this.faceColor);	
+		graphics2.fill(face);
+	
+		
+		//Draws the eyes and their colors
+		graphics2.setColor(this.eyeColor);
+		graphics2.fill(rightEye);
+		graphics2.fill(leftEye);
+		graphics2.draw(rightEye);
+		graphics2.draw(leftEye);
+		
+		//Draws the mouth
+		graphics2.setColor(this.mouthOutlineColor);
+		graphics2.draw(mouth);
+		
+		graphics2.rotate(-(this.angleOfFace)*Math.PI/180);
+	}
+}

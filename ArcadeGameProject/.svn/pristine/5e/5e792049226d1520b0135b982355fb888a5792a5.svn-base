@@ -1,0 +1,50 @@
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+
+public class Weapon extends Entity{
+	public int startX;
+	public int startY;
+	public String direction;
+	public boolean fired;
+	public int timer;
+	
+	public Weapon(String direction, int x, int y) {
+		super(x, y);
+		this.timer = 10;
+		this.startX = x;
+		this.startY = y;
+		this.fired = false;
+		this.direction = direction;
+		try {
+			this.image = ImageIO.read(new File("images/tnt.jpg"));
+		} catch (IOException exception) {
+			System.out.println("ERROR: closed money image not found");
+		}
+	}
+	public void remove(){
+		this.image = null;
+	}
+	public void move(ArrayList<Dirt> dirt, Hero hero) {
+		if(this.fired){
+			
+		}else{
+			this.x = hero.getX();
+			this.y = hero.getY();
+		}
+	}
+
+	public boolean isDirt(ArrayList<Dirt> dirt, int x, int y) {
+		for(Dirt d: dirt){
+			if(d.getX() == x&& d.getY() == y){
+				
+				return true;
+			}
+			
+		}
+		return false;
+	}
+}

@@ -1,0 +1,244 @@
+import java.util.ArrayList;
+
+/**
+ * 
+ * TODO Put here a description of what this class does.
+ *
+ * @author goldacbj.
+ *         Created Dec 4, 2014.
+ */
+public class TwelveProblems {
+	/** 
+	 * 
+	 * TODO computes the given point's distance from the origin (0,0)
+	 *
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static double distanceFromOrigin(double x, double y) {
+		double distance = Math.sqrt((x*x)+(y*y));
+		return distance;
+	}
+	
+	/** 
+	 * 
+	 * returns true if the given number is a perfect number,
+	 * if not it returns false
+	 *
+	 * @param input
+	 * @return
+	 */
+	public static boolean isPerfect(int input) {
+		int dividers = 0;
+		for(int i = 1; i <= input-1; i++){ 
+			if(input % i == 0) {
+				dividers += i;
+			}
+		}
+		if (dividers == input){
+			return true;
+		}
+			return false;
+	}
+	
+	/**
+	 * 
+	 * returns true if the last character of a sequence is upper-case, 
+	 * if not it returns false
+	 *
+	 * @param String 
+	 * @return boolean
+	 */
+	public static boolean endsWithUpperCaseLetter(String input) {
+		char lastChar = 'a';
+		if(input.length() >=1) {
+			lastChar = input.charAt(input.length()-1);
+		}
+		if(Character.isUpperCase(lastChar)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * adds up all of the integers up to the given number,
+	 * for example sumofRange(4) = (1+2+3+4) = 10
+	 *
+	 * @param start
+	 * @param end
+	 * @return int
+	 */
+	public static int sumOfRange(int start, int end) {
+		int total = 0;
+		for(int i = start; i <= end; i++) {
+			total += i;
+		}
+		return total;
+	}
+	
+	/**
+	 * 
+	 * returns the first index at which the two given strings are different.
+	 * if the two strings are the same, then it returns -1
+	 *
+	 * @param one
+	 * 			first String
+	 * @param two
+	 * 			Second String
+	 * @return index of difference
+	 */
+	public static int firstDifference(String one, String two) {
+		for(int i = 0; i < one.length(); i++) {
+			if(one.charAt(i) != two.charAt(i)){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Given one string, return the most common character.
+	 * 
+	 * Example:
+	 *   mostCommonCharacter("aaab") returns 'a'
+	 *   mostCommonCharacter("abcbcdc") returns 'c'
+	 * 
+	 * You can assume that your string will not be empty and that
+	 * one character will be more common than all the others (i.e. there
+	 * won't be a tie for the most common character)
+	 * 
+	 * Your solution should use a pair of nested for loops.  You might be
+	 * tempted to use something like python's dictionary here, but
+	 * we'll save that till later when we cover hashmaps.
+	 * 
+	 * Requires: for loops, strings
+	 */
+	public static char mostCommonCharacter(String input) {
+		int counter = 0;
+		char topCharacter = 'a';
+		char indexedChar = 'b';
+		int charTotal = 0;
+		for(int i = 0; i < input.length(); i++) {
+			indexedChar = input.charAt(i);
+				for(int j = 0; j < input.length(); i++){
+					if(indexedChar == input.charAt(j)){
+						counter++;
+					}
+				}
+			if(charTotal < counter){
+				topCharacter = indexedChar;
+				charTotal = counter;
+			}
+			counter = 0;
+		}
+		return indexedChar;
+	}
+	
+	
+	/**
+	 * Finds the first number in an array divisible by 77 and
+	 * returns it. 
+	 * 
+	 * If no number is found, the function returns -1
+	 * 
+	 * Example:
+	 *  firstDivisibleBy77({88,24,154,77}) returns 154
+	 *  firstDivisibleBy77({5929, 280}) returns 5929
+	 *  firstDivisibleBy77({1,2,3,4}) returns -1
+	 * 
+	 * Don't forget about the modulus operator (%)
+	 */
+	public static int firstDivisbleBy77(int[] numbers) {
+		return 0;
+	}
+	
+	
+	/**
+	 * Creates an array of all the powers of two, up to (and including)
+	 * the given exponent starting at 2^0.
+	 * 
+	 * If the given exponent is less than zero, return an empty array.
+	 * You can do this by saying "return new int[0];"
+	 * 
+	 * For example:
+	 *   powersOfTwo(3) returns {1,2,4,8}
+	 *   powersOfTwo(0) returns {1}
+	 *   powersOfTwo(-66) returns {}
+	 * 
+	 * Requires: arrays, for loops
+	 */
+	public static int[] powersOfTwo(int maxExponent) {
+		return null;
+	}
+	
+	/**
+	 * Given two arrays of integers that are the same length, returns
+	 * a new array that contains the pairwise max of the corresponding
+	 * elements of the original arrays (i.e. the larger of the two numbers
+	 * in that slot in the original arrays)
+	 * 
+	 * For example:
+	 *   maxArray({2,10},{1,200}) returns {2,200}
+	 *   maxArray({-5, 60, 7},{-10,400,8}) returns {-5,400,8} 
+	 *   
+	 *   Requires: arrays, for loops
+	 */
+	public static int[] maxArray(int[] one, int[] two) {
+		return null;
+	}
+	
+	/**
+	 * 
+	 * Given two arrays, count the number of times the first array occurs
+	 * in the second array.  You can assume that the first array is shorter
+	 * than the second.
+	 * 
+	 * For example:
+	 *   timesOccur({1,2}, {7,1,2,7,7,7,1,2,7}) returns 2
+	 *   timesOccur({1,1}, {1,1,1,3} returns 2 (in the 0th and 1st position)
+	 *   timesOccur({1,2}, {1,3,2,1} returns 0
+	 * 
+	 *  Requires: arrays, nested for loops
+	 */
+	public static int timesOccur(int[] shorter, int longer[]) {
+		return 0;
+	}
+	
+	/**
+	 * Given an arraylist of strings, return a new list where
+	 * anytime the world "double" appears in the original list
+	 * it is doubled in the new list.
+	 * 
+	 * For example:
+	 *   doubleDouble(["foo","double"]) returns ["foo","double","double"]
+	 *   doubleDouble(["a","double","b","double","c"]) returns ["a","double","double","b","double","double","c"]
+	 *   
+	 * Be careful not to modify the original list.  Start by creating a new
+	 * output list that holds the results!  E.g.
+	 * 
+	 * ArrayList<String> output = new ArrayList<String>();
+	 * 
+	 * When you are comparing strings, be sure to use .equals and not ==
+	 * Eg.
+	 * if(currentString .equals("double")) { stuff }
+	 * 
+	 */
+	public static ArrayList<String> doubleDouble(ArrayList<String> input) {
+		return null;
+	}
+	
+	/**
+	 * Given an arraylist of strings, return a new arraylist of strings
+	 * containing all the 3 letter strings in the original list
+	 * 
+	 * For example:
+	 *   threeCharacterStrings(["foo","a","bar"]) returns ["foo","bar"]
+	 *   threeCharacterStrings(["foo","a","foo", "qq"]) returns ["foo","foo"]
+	 *   threeCharacterStrings([]) returns []
+	 */
+	public static ArrayList<String> threeCharacterStrings(ArrayList<String> strings) {
+		return null;
+	}
+}

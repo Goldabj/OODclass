@@ -1,0 +1,46 @@
+
+public class HW1 {
+
+	/*
+	 * TODO: Write a function from scratch down below here.  The function should 
+	 * take 3 whole numbers (e.g. no fractions) and return true if exactly 2 of the
+	 * three are even.  For example:
+	 * 
+	 * twoEven(3,2,6) returns true because 2 and 6 are even
+	 * twoEven(2,4,6) returns false because all three are even, not just 2
+	 * twoEven(3,99,100) returns false because only 100 is even
+	 * 
+	 * Hint: take a look at section 5.7 in your textbook for some more
+	 * examples of boolean functions like AND and NOT.  The rest of chapter
+	 * 5 might be good too if you're a bit confused.
+	 * 
+	 * Be sure to add appropriate Javadoc comments for your function
+	 */
+	
+	/*
+	 * TODO: Either before or after your write your function, write
+	 * a main that tests your function and shows it working.
+	 * 
+	 */
+	public static void main(String[] args) {
+		System.out.println(twoEven(3,2,6));
+		System.out.println(twoEven(2,4,6));
+		System.out.println(twoEven(3,99,100));
+	}
+	
+	public static boolean twoEven(int one, int two, int three) { 
+		if(one%2 == 0 && two%2 == 0 && three%2 == 1) {
+			return true; 
+		}
+		else if(one%2 ==0 && three%2 ==0 && two%2 == 1) {
+			return true;
+		}
+		else if(two%2 == 0 && three%2 == 0 && one%2 == 1){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}
+

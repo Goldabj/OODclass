@@ -1,0 +1,157 @@
+package linearLightsOut;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class LinearGameComponent extends JComponent {
+	protected JButton[] lightArray;
+	protected int numberOfX = 0;
+	protected int numberOfO = 0;
+	protected int numberOfButtons = 0;
+
+	/**
+	 * 
+	 * Constructs a panel of light buttons and a panel of buttons that start a
+	 * new game and another that exits.
+	 *
+	 * @param numberOfButtons
+	 *            -- number of light buttons
+	 * @param frame
+	 *            -- frame to add the two panesl on
+	 */
+	public LinearGameComponent(int numberOfButtons, JFrame frame) {
+		this.numberOfButtons = numberOfButtons;
+		// Create a Panel to put lights on it
+		final JPanel lightButtons = new JPanel();
+		frame.add(lightButtons, BorderLayout.NORTH);
+
+		// initializes the light array to number of buttons
+		this.lightArray = new JButton[this.numberOfButtons];
+
+		// set the buttons to either X or O
+		for (int i = 0; i < this.numberOfButtons; i++) {
+			JButton light = new JButton();
+			if (Math.random() <= 0.5) {
+				light.setText("X");
+				this.numberOfX++;
+			} else {
+				light.setText("O");
+				this.numberOfO++;
+			}
+			lightButtons.add(light);
+			this.lightArray[i] = light;
+		}
+
+		/**
+		 * 
+		 * creates a action listener for JButtons that changes the label of the
+		 * button to either X or O
+		 *
+		 * @author goldacbj. Created Jan 24, 2015.
+		 */
+		class LightListener implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				// Gets the button that was clicked
+				JButton lightClicked = (JButton) e.getSource();
+
+				// Changes the buttons and the its neighbors if it has any next
+				// to it
+				for (int i = 0; i < LinearGameComponent.this.numberOfButtons; i++) {
+					if (lightClicked == LinearGameComponent.this.lightArray[i]) {
+						changeLight(LinearGameComponent.this.lightArray[i],
+								lightButtons);
+						if (i > 0) {
+							changeLight(
+									LinearGameComponent.this.lightArray[i - 1],
+									lightButtons);
+						}
+						if (i < LinearGameComponent.this.numberOfButtons - 1) {
+							changeLight(
+									LinearGameComponent.this.lightArray[i + 1],
+									lightButtons);
+						}
+						if (gameOver()) {
+							frame.setTitle("CONGRATS, YOU WON!!!");
+						}
+					}
+				}
+			}
+
+		}
+		// Adds an actionListener to each light
+		for (int i = 0; i < this.numberOfButtons; i++) {
+			this.lightArray[i].addActionListener(new LightListener());
+		}
+		// create the panel and Buttons that create a new game and close game
+		JPanel operationButtons = new JPanel();
+		JButton newGameButton = new JButton("New Game");
+		operationButtons.add(newGameButton);
+		JButton exitButton = new JButton("Quit");
+		operationButtons.add(exitButton);
+		frame.add(operationButtons, BorderLayout.SOUTH);
+
+		// adds actionListener to newGameButton
+		newGameButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				LinearMain.main(new String[1]);
+			}
+		});
+
+		// adds actionListener to exit Button
+		exitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				System.exit(0);
+			}
+		});
+	}
+
+	/**
+	 * 
+	 * changes the label of the button pressed, and changes the label of the
+	 * surrounding buttons
+	 *
+	 * @param light
+	 *            -- JButton that is a light
+	 * @param LightPanel
+	 *            -- a JPanel of only light buttons.
+	 */
+	public void changeLight(JButton light, JPanel LightPanel) {
+		if (light.getText() == "X") {
+			light.setText("O");
+			this.numberOfX--;
+			this.numberOfO++;
+		} else {
+			light.setText("X");
+			this.numberOfO--;
+			this.numberOfX++;
+		}
+	}
+
+	/**
+	 * 
+	 * compares the number of Os and Xs, if either match the number of buttons
+	 * then it returns true. else it returns false
+	 *
+	 * @return
+	 */
+	protected boolean gameOver() {
+		if (this.numberOfO == this.numberOfButtons
+				|| this.numberOfX == this.numberOfButtons) {
+			return true;
+		}
+		return false;
+	}
+}

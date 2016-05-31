@@ -1,0 +1,63 @@
+package ballworlds;
+
+import java.awt.Color;
+import java.awt.geom.Point2D;
+
+import util.Random;
+
+public class Pulsar extends Ball {
+
+	private static final double DIAMETER = 25;
+	private int brightness;
+	private boolean isGettingLighter;
+
+	public Pulsar(BallEnvironment world) {
+		super(world);
+		double xPosition = Random.randInterval(0, world.getSize().getWidth());
+		double yPosition = Random.randInterval(0, world.getSize().getHeight());
+		super.setCenterPoint(new Point2D.Double(xPosition, yPosition));
+		this.brightness = 0;
+		this.isGettingLighter = true;
+	}
+
+	@Override
+	public Color getColor() {
+		Color color = new Color(this.brightness, this.brightness,
+				this.brightness);
+		return color;
+	}
+
+	@Override
+	public void updatePosition() {
+		// Doesn't move
+
+	}
+
+	@Override
+	public void updateSize() {
+		// Stays the same size
+
+	}
+
+	@Override
+	public void updateColor() {
+		if (this.brightness >= 255) {
+			this.isGettingLighter = false;
+		}
+		if (this.brightness == 0) {
+			this.isGettingLighter = true;
+		}
+		if (this.isGettingLighter) {
+			this.brightness++;
+		} else {
+			this.brightness--;
+		}
+
+	}
+
+	@Override
+	public double getDiameter() {
+		return DIAMETER;
+	}
+
+}

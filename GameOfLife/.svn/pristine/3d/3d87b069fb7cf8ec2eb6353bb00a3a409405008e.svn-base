@@ -1,0 +1,304 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+/**
+ * This class represents the game board. It can draw a graphical rendering of
+ * its current state and can calculate its next state.
+ * 
+ * @author TODO 0: [YOUR NAMES HERE]. Created Sep 24, 2008.
+ */
+public class GameOfLife extends JComponent {
+	private static final int MAX_ROWS = 90;
+	private static final int MAX_COLUMNS = 90;
+	private static final double DOT_SIZE = 7;
+//	private ArrayList<Coordinates> occupied;
+	private Coordinates[][] gameBoard;
+	private Boolean [][] occupiedList;
+	
+
+	/*
+	 * TODO 1: Decide how you'll represent the state of the game board. That is, what field(s)
+	 * do you need?
+	 */
+
+	/**
+	 * Constructs a new game board from the list of initially occupied
+	 * coordinates.
+	 * 
+	 * @param initialCells
+	 */
+	public GameOfLife(ArrayList<Coordinates> initialCells) {
+//		this.occupied = new ArrayList<Coordinates>();
+//		this.occupied = initialCells;
+		this.gameBoard = new Coordinates[MAX_ROWS][MAX_COLUMNS];
+		this.occupiedList = new Boolean[MAX_ROWS][MAX_COLUMNS];
+		for(int i = 0; i < this.occupiedList.length; i++) {
+			for(int j = 0; j < this.occupiedList[i].length; j++) {
+					this.occupiedList[i][j] = false;
+				}
+		}
+		for(int c = 0; c < initialCells.size(); c++){
+			this.occupiedList[initialCells.get(c).getRow()][initialCells.get(c).getColumn()] = true; 
+		}
+		
+	}
+		
+		
+		/*
+		 * TODO 2: Document, test, and implement this constructor that takes an
+		 * ArrayList<Coordinates> specifying all the initially occupied squares
+		 * on the game board. The Coordinates class is provided. NOTE: You will
+		 * probably need a "smart" constructor.  Instead of just storing
+		 * initialCells, you'll need to convert to whatever representation you
+		 * chose in the previous to-do item.
+		 */
+
+	/**
+	 * @param row
+	 * @param column
+	 * @return whether or not the square in the given row and column is occupied
+	 */
+	public boolean isOccupied(int row, int column) {
+//			if(this.occupied.get(i).getRow() == row && this.occupied.get(i).getColumn() == column){
+//				return true;
+//			}
+//		}
+		if(this.occupiedList[row][column] == true){
+			return true;
+		}
+		return false;
+		/*
+		 * TODO 4: Document, test, and implement this method that detects whether
+		 * a particular square is occupied.
+		 */
+	}
+
+	/**
+	 * Counts the number of occupied cells around the given square.
+	 * 
+	 * @param row
+	 * @param column
+	 * @return the number of occupied cells
+	 */
+	public int getNeighborCount(int row, int column) {
+		int count = 0;
+		if(row == 0 ||row == MAX_ROWS-1 || column == 0 || column == MAX_COLUMNS){
+			if(row == 0){
+				/*
+				 * top row, not corner 
+				 */
+				if(column != 0 || column != MAX_COLUMNS-1){
+					if(isOccupied(this.gameBoard[row+1][column].getRow(),this.gameBoard[row-1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column+1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column-1].getRow(),this.gameBoard[row][column-1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row+1][column-1].getRow(),this.gameBoard[row-1][column-1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row+1][column+1].getRow(),this.gameBoard[row-1][column+1].getColumn()) == true){
+						count++;
+					}
+					
+				}
+				/*
+				 * upper left corner
+				 */
+				if(column == 0){
+					if(isOccupied(this.gameBoard[row+1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column+1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row+1][column+1].getRow(),this.gameBoard[row+1][column+1].getColumn()) == true){
+						count++;
+					}
+				}
+				/*
+				 * upper right corner 
+				 */
+				if(column == MAX_COLUMNS-1){
+					if(isOccupied(this.gameBoard[row+1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column-1].getRow(),this.gameBoard[row][column-1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row+1][column-1].getRow(),this.gameBoard[row-1][column-1].getColumn()) == true){
+						count++;
+					}
+				}
+			}
+			/*
+			 * Bottom Row, not corner 
+			 */
+			if(row == MAX_ROWS-1){
+				if(column != 0 || column != MAX_COLUMNS-1){
+					if(isOccupied(this.gameBoard[row-1][column].getRow(),this.gameBoard[row-1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column+1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column-1].getRow(),this.gameBoard[row][column-1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column-1].getRow(),this.gameBoard[row-1][column-1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column+1].getRow(),this.gameBoard[row-1][column+1].getColumn()) == true){
+						count++;
+					}
+				}
+				/*
+				 * Bottom row, left corner 
+				 */
+				if(column == 0){
+					if(isOccupied(this.gameBoard[row-1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column+1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column+1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					
+				}
+				/*
+				 * Bottom row, right corner 
+				 */
+				if(column == MAX_COLUMNS-1){
+					if(isOccupied(this.gameBoard[row-1][column].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column-1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column-1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+						count++;
+					}
+				}	
+			}
+			/*
+			 * Leftmost Column 
+			 */
+			if(column == 0){
+				if(row != 0 && row != MAX_ROWS-1){
+					if(isOccupied(this.gameBoard[row+1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column+1].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row+1][column+1].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column+1].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}	
+				}
+			}
+			/*
+			 * Rightmost Column
+			 */
+			if(column == MAX_COLUMNS-1){
+				if(row!= 0 && row!=MAX_ROWS){
+					if(isOccupied(this.gameBoard[row+1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row][column-1].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row+1][column-1].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+					if(isOccupied(this.gameBoard[row-1][column-1].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+						count++;
+					}
+				}
+			}				
+		}
+		else{
+			if(isOccupied(this.gameBoard[row+1][column].getRow(),this.gameBoard[row+1][column].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row-1][column].getRow(),this.gameBoard[row-1][column].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row][column+1].getRow(),this.gameBoard[row][column+1].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row][column-1].getRow(),this.gameBoard[row][column-1].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row+1][column+1].getRow(),this.gameBoard[row+1][column+1].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row-1][column-1].getRow(),this.gameBoard[row-1][column-1].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row+1][column-1].getRow(),this.gameBoard[row+1][column-1].getColumn()) == true){
+				count++;
+			}
+			if(isOccupied(this.gameBoard[row-1][column+1].getRow(),this.gameBoard[row-1][column+1].getColumn()) == true){
+				count++;
+			}
+		}	
+		/*
+		 * TODO 5: Document, test, and implement this method that takes a row and
+		 * column and returns the number of occupied neighbor squares.
+		 */
+		return count;
+	}
+
+	/**
+	 * Updates the state of this game board for the next generation.
+	 */
+	public void nextGeneration() {
+		/*
+		 * TODO 6: Document, test, and implement this method that calculates the
+		 * occupied squares for the next generation of this game. See p. 332 of
+		 * Big Java, or the class slides for the rules. You'll need to use
+		 * temporary storage to hold the next generation information as you
+		 * calculate it.
+		 */
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
+		/*
+		 * TODO 3: Implement this method to draw the game board.  You don't have to 
+		 * draw the grid if you don't want, just the occupied cells.
+		 */	
+		for(int r = 0; r < this.occupiedList.length; r++) {
+			for(int c = 0; c < this.occupiedList[1].length; c++) {
+				Rectangle2D.Double cell = new Rectangle2D.Double(c*this.DOT_SIZE, r*this.DOT_SIZE, this.DOT_SIZE, this.DOT_SIZE);
+				if(isOccupied(r,c)) {
+					g2.setColor(Color.black);
+					g2.fill(cell);
+				}
+			}
+		}
+	}
+
+}

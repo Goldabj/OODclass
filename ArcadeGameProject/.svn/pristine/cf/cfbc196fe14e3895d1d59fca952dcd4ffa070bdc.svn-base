@@ -1,0 +1,107 @@
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+/**
+ * The money bags of the digger game, they can be moved, and they can be broken
+ * open and collected
+ *
+ * @author goldacbj. Created Feb 10, 2015.
+ */
+public class Money extends Entity {
+	private int startingX;
+	private int startingY;
+	private static final int VALUE = 50;
+	private boolean isOpen;
+	private int timer = 10;
+	private BufferedImage openMoneyImage;
+	public boolean lethal = false;
+	
+	/**
+	 * Constucts a bag of money at the given positoin
+	 *
+	 * @param statingPoint
+	 */
+	public Money(int startingX, int startingY) {
+		super(startingX, startingY);
+		this.startingX = startingX;
+		this.startingY = startingY;
+		this.isOpen = false;
+		this.color = Color.YELLOW;
+		
+		try {
+			this.image = ImageIO.read(new File(Main.path + "images/sand.png"));
+			// need to get a better image still
+			this.openMoneyImage = ImageIO.read(new File(Main.path + "images/closedmoney.jpg"));
+		} catch (IOException exception) {
+			System.out.println("ERROR: money image not found");
+		}
+	}
+
+
+	public void updateMoney(ArrayList<Empty> empties) {
+		this.lethal = Nobbin.isEmpty(empties, this.x, this.y);
+		if(this.lethal){
+			if(this.timer == 0){
+				this.move(0, 1);
+			}else{
+				this.timer--;
+				//wiggle();
+			}
+		}else{
+			this.timer = 10;
+		}
+	}
+	
+		public void wiggle(){
+			double rand = Math.random();
+			if(rand > 0.5){
+				this.move(-1/10, 0);
+			}else{
+			this.move(1/10, 0);
+			}
+			this.x = this.startingX;
+			this.y = this.startingY;
+			
+		}
+		
+		//Still need to move if nobbins hit it.
+		
+
+	
+
+	/**
+	 * returns the value of the money
+	 *
+	 * @return
+	 */
+	public int getValue() {
+		return this.VALUE;
+	}
+
+	/**
+	 * returns true if the bag of money has been opened
+	 *
+	 * @return
+	 */
+	public boolean isOpen() {
+		return this.isOpen;
+	}
+	
+	/**
+	 * Opens the money
+	 *
+	 */
+	public synchronized void Open() {
+		this.isOpen = true;
+	}
+	
+	public BufferedImage getOpenMoneyImage() {
+		return this.openMoneyImage;
+	}
+
+}

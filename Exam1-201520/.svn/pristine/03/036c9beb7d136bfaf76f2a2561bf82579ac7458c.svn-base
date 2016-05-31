@@ -1,0 +1,40 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Polygon;
+
+/**
+ * Draw a spaceship
+ * 
+ * This is the class that you should change.
+ * 
+ * @author you (and Buffalo)
+ *
+ */
+public class DrawingSpaceship {
+
+	private static final int WIDTH = 20;
+	private static final int HEIGHT = 40;
+	private static final Color SHIP_COLOR = Color.blue;
+	
+	/**
+	 * Draws the spaceship
+	 * 
+	 * @param g the graphics object to draw on
+	 */
+	public void drawOn(Graphics2D g) {
+
+		// just an example, to give your a feel how to draw the spaceship
+		// you'll have to modify this code heavily
+		
+		Polygon py = new Polygon();
+		py.addPoint(50, 50);
+		py.addPoint(50+WIDTH, 50);
+		py.addPoint(50+WIDTH/2, 50-HEIGHT);
+		g.setColor(SHIP_COLOR);
+		g.fill(py);
+		
+	}
+	
+	
+}

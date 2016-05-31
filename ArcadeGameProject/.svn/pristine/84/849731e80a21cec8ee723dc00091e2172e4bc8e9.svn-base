@@ -1,0 +1,576 @@
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Scanner;
+
+import javax.swing.JOptionPane;
+
+/**
+ * Runs the game digger and contains all the methods that are neccisary to run
+ * the game
+ *
+ * @author goldacbj. Created Feb 9, 2015.
+ */
+public class DiggerGame {
+	private int currentLevel = 1;
+	protected boolean isGameOver;
+	private boolean isGameWon;
+	private int score = 0;
+	private int boardLength = 24;
+	private int boardWidth = 24;
+	private static final int RECTANGLE_WIDTH = 35;
+	private static final int RECTANGLE_HEIGHT = 35;
+	protected volatile Hero hero;
+	protected volatile ArrayList<Nobbin> nobbins = new ArrayList<>();
+	protected volatile ArrayList<Hobbin> hobbins = new ArrayList<>();
+	protected volatile ArrayList<Gem> gems = new ArrayList<>();
+	protected volatile ArrayList<Money> money = new ArrayList<>();
+	protected volatile ArrayList<Empty> empty = new ArrayList<>();
+	protected volatile ArrayList<Dirt> Dirts = new ArrayList<>();
+	protected volatile ArrayList<Weapon> weapon = new ArrayList<>();
+	protected char[][] gameBoard;
+	private ArrayList<String> levels = new ArrayList<>();
+	public boolean fuse = true;
+
+	/**
+	 * Consturcts a Digger Game at a random level 1.
+	 *
+	 */
+	public DiggerGame() {
+		this.levels = new ArrayList<>();
+		// levels must be a text file with chars and be text that is 24 x 24
+		this.levels.add("level1.txt");
+		this.levels.add("level2.txt");
+		this.levels.add("level3.txt");
+		this.levels.add("level4.txt");
+		this.levels.add("level5.txt");
+		this.levels.add("level6.txt");
+		this.gameBoard = new char[24][24];
+		// starts the game at level 1
+		loadLevel(this.levels.get(0));
+
+	}
+	
+/**
+	 * Loads the game level by analyzing the level text file
+	 *
+	 * @param level
+	 */
+	public synchronized void loadLevel(String level) {
+		// removes all previous gems, money, or enemies
+		this.hobbins.clear();
+		this.money.clear();
+		this.gems.clear();
+		this.nobbins.clear();
+		this.empty.clear();
+		this.Dirts.clear();
+
+		this.fuse = true;
+
+		Scanner scanner = null;
+		try {
+			scanner = new Scanner(new File(level));
+		} catch (FileNotFoundException exception) {
+			// nothing
+		}
+
+		// intializes the gameboard
+		for (int r = 0; r < 24; r++) {
+			String row = scanner.next();
+			for (int c = 0; c < row.length(); c++) {
+				this.gameBoard[r][c] = row.charAt(c);
+			}
+		}
+
+		for (int r = 0; r < this.gameBoard.length; r++) {
+			for (int c = 0; c < this.gameBoard[r].length; c++) {
+				// adds the Gems
+				if (this.gameBoard[r][c] == 'G') {
+					Gem gem = new Gem(c, r);
+					this.gems.add(gem);
+					this.Dirts.add(new Dirt(c,r));
+				}
+				// adds the Hero
+				if (this.gameBoard[r][c] == 'H') {
+					this.hero = new Hero(c, r);
+					this.empty.add(new Empty(c,r));
+				}
+				// adds the money
+				if (this.gameBoard[r][c] == 'M') {
+					Money money = new Money(c, r);
+					this.money.add(money);
+					this.Dirts.add(new Dirt(c, r));
+				}
+				// adds the Hobbins
+				if (this.gameBoard[r][c] == 'K') {
+					Hobbin hobbin = new Hobbin(c, r);
+					this.hobbins.add(hobbin);
+					this.empty.add(new Empty(c,r));
+				}
+				// adds the Nobbins
+				if (this.gameBoard[r][c] == 'N') {
+					Nobbin nobbin = new Nobbin(c, r);
+					this.nobbins.add(nobbin);
+					this.empty.add(new Empty(c, r));
+				}
+				// adds the Empty
+				if (this.gameBoard[r][c] == 'E') {
+					Empty empty1 = new Empty(c, r);
+					this.empty.add(empty1);
+				}
+
+				if (this.gameBoard[r][c] == 'D') {
+					this.Dirts.add(new Dirt(c, r));
+				}
+			}
+		}
+		scanner.close();
+	}
+	/**
+	 * 
+	 * updates the Nobbins and the money objects.
+	 *
+	 */
+	public void updateEverything() {
+		// updates the hero and removes dirt that was in its position
+		this.hero.updateHero(this.boardWidth, this.boardLength, this.money, this.empty);
+		addEmpty(this.hero.getX(), this.hero.getY());
+		
+		//moves the money
+		for(int i = 0; i < this.money.size(); i++) {
+			Money m = this.money.get(i);
+			int xVelocity = this.hero.getXVelocity();
+			if(m.getX() == this.hero.getX() && m.getY() == this.hero.getY()) {
+				if(xVelocity > 0 && m.getX() < this.boardWidth) {
+					m.move(xVelocity, 0);
+				}
+				if(xVelocity < 0 && m.getX() > 0) {
+					m.move(xVelocity, 0);
+				}
+			}
+		}
+
+		// removes a gem that was in heros position
+		Gem gem = null;
+		for (Gem g : this.gems) {
+			if (g.Equals(this.hero)) {
+				gem = g;
+				this.score += Gem.getValue();
+			}
+		}
+		if (gem != null) {
+			this.gems.remove(gem);
+		}
+
+		//updates the money
+		for (Money m : this.money) {
+			m.updateMoney(this.empty);
+		}
+
+		//updates the nobbins
+		for (Nobbin n : this.nobbins) {
+			n.updateNobbin(this.empty, this.hero);
+
+		}
+
+		// updates the hobbins positions
+		for (Hobbin h : this.hobbins) {
+			h.updateHobbin(this.hero, this.money, this.empty);
+			addEmpty(h.getX(), h.getY());
+		}
+
+		// kills the hero, hobbins or nobbins, if money hits it
+		enemyKilled();
+		heroKilled();
+		
+		// collects open money
+		collectMoney();
+
+		// restarts the game as long as the hero has more lives left
+		if (!this.hero.isAlive()) {
+			if (this.hero.getLives() == 0) {
+				this.isGameOver = true;
+			} else {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException exception) {} 
+				finally {
+					resorection();
+				}
+			}
+		}
+		// moves the weapon and fires the weapon
+		this.hero.weapon.move(this.Dirts, this.hero);
+		if (this.hero.weapon.fired) {
+			if (this.hero.weapon.timer == 0) {
+				try {
+					if (this.fuse == true) {
+						boom(this.hero.weapon.getX(), this.hero.weapon.getY());
+						this.empty.add(new Empty(this.hero.weapon.getX(),
+								this.hero.weapon.getY()));
+						this.hero.weapon.remove();
+						this.hero.weapon.fired = false;
+						this.fuse = false;
+					}
+				} catch (ConcurrentModificationException exception) {
+					exception.printStackTrace();
+				}
+			} else {
+				this.hero.weapon.timer--;
+			}
+		}
+		
+		// checks to see if the level is complete or game is won
+		if (isLevelComplete()) {
+			if (this.currentLevel >= this.levels.size()) {
+				this.isGameWon = true;
+			} else {
+				loadLevel(this.levels.get(this.currentLevel));
+				this.currentLevel++;
+			}
+		}
+
+	}
+
+	/**
+	 * Kills the Hero if money hits the hero, or one of the enemies catches the
+	 * hero
+	 *
+	 */
+	private void heroKilled() {
+		for (Nobbin n : this.nobbins) {
+			if (n.getX() == this.hero.getX() && n.getY() == this.hero.getY()) {
+				if (this.hero.isAlive()) {
+					this.hero.died();
+				}
+			}
+		}
+		for (Hobbin h : this.hobbins) {
+			if (h.getX() == this.hero.getX() && h.getY() == this.hero.getY()) {
+				if (this.hero.isAlive()) {
+					this.hero.died();
+				}
+			}
+		}
+		for (Money m : this.money) {
+			if (m.getX() == this.hero.getX() && m.getY() == this.hero.getY()) {
+				if (!m.isOpen(this.empty) && m.isLethal(this.empty)) {
+					if (this.hero.isAlive()) {
+						this.hero.died();
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * kills the enemy if it is hit by money.
+	 *
+	 */
+	private void enemyKilled() {
+		Hobbin remover = null;
+		Nobbin removable = null;
+		for (Money m : this.money) {
+			if (!m.isOpen(this.empty) && m.isLethal(this.empty)) {
+				for (int i = 0; i < this.hobbins.size(); i++) {
+					Hobbin h = this.hobbins.get(i);
+					if (h.getX() == m.getX() && h.getY() == m.getY()) {
+						remover = h;
+					}
+				}
+				if(remover != null) {
+					this.hobbins.remove(remover);
+				}
+				for (int i = 0; i < this.nobbins.size(); i++) {
+					Nobbin n = this.nobbins.get(i);
+					if (m.getX() == n.getX() && m.getY() == n.getY()) {
+						removable = n;
+					}
+				}
+				if(removable != null) {
+					this.nobbins.remove(removable);
+				}
+			}
+		}
+	}
+	
+	public void collectMoney() {
+		Money collected = null;
+		for(int i = 0; i < this.money.size(); i++) {
+			Money m = this.money.get(i);
+			if(m.isOpen(this.empty) && m.getX() == this.hero.getX() && m.getY() == this.hero.getY()) {
+				collected = m;
+			}	
+		}
+		if(collected != null) {
+			this.score += collected.getValue();
+			this.money.remove(collected);
+			return;
+		}
+		
+		for(int i = 0; i < this.money.size(); i++) {
+			Money m = this.money.get(i);
+			for(int j = 0; j < this.hobbins.size(); j++) {
+				Hobbin h = this.hobbins.get(j);
+				if(m.isOpen(this.empty) && m.getX() == h.getX() && h.getY() == m.getY() ) {
+					collected = m;
+				}
+			}
+			for(int j = 0; j < this.nobbins.size(); j++) {	
+				Nobbin n = this.nobbins.get(j);
+				if(m.isOpen(this.empty) && m.getX() == n.getX() && m.getY() == n.getY()) {
+					collected = m;
+				}
+			}
+		}
+		if(collected != null) {
+			this.money.remove(collected);
+			return;
+		}
+		
+	}
+
+	public void boom(int x, int y) {
+		for (int i = 0; i < this.gems.size(); i++) {
+			Gem g = this.gems.get(i);
+			if (g.getX() == x + 1 || g.getX() == x - 1 || g.getX() == x) {
+				if (g.getY() == y + 1 || g.getY() == y - 1 || g.getY() == y) {
+					this.empty.add(new Empty(g.getX(), g.getY()));
+					this.gems.remove(g);
+				}
+			}
+		}
+		for (int i = 0; i < this.Dirts.size(); i++) {
+			Dirt g = this.Dirts.get(i);
+			if (g.getX() == x + 1 || g.getX() == x - 1 || g.getX() == x) {
+				if (g.getY() == y + 1 || g.getY() == y - 1 || g.getY() == y) {
+					this.empty.add(new Empty(g.getX(), g.getY()));
+					this.Dirts.remove(g);
+				}
+			}
+		}
+		for (int i = 0; i < this.nobbins.size(); i++) {
+			Nobbin g = this.nobbins.get(i);
+			if (g.getX() == x + 1 || g.getX() == x - 1 || g.getX() == x) {
+				if (g.getY() == y + 1 || g.getY() == y - 1 || g.getY() == y) {
+					this.empty.add(new Empty(g.getX(), g.getY()));
+					this.nobbins.remove(g);
+				}
+			}
+		}
+		for (int i = 0; i < this.hobbins.size(); i++) {
+			Hobbin g = this.hobbins.get(i);
+			if (g.getX() == x + 1 || g.getX() == x - 1 || g.getX() == x) {
+				if (g.getY() == y + 1 || g.getY() == y - 1 || g.getY() == y) {
+					this.empty.add(new Empty(g.getX(), g.getY()));
+					this.hobbins.remove(g);
+				}
+			}
+		}
+		if (this.hero.getX() == x + 1 || this.hero.getX() == x - 1
+				|| this.hero.getX() == x) {
+			if (this.hero.getY() == y + 1 || this.hero.getY() == y - 1
+					|| this.hero.getY() == y) {
+				this.hero.died();
+			}
+		}
+	}
+
+	/**
+	 * keeps the sate of the gameboard, but resets the hero and enimies to their
+	 * starting positions
+	 *
+	 */
+	protected void resorection() {
+		// reset Hero Position
+		this.hero.resetPosition();
+		// reset Hobbins positoins
+		for (Hobbin h : this.hobbins) {
+			h.resetPositoin();
+		}
+		// resest Nobbins positons
+		for (Nobbin n : this.nobbins) {
+			n.resetPositoin();
+		}
+	}
+
+	
+
+	/**
+	 * Has the game go up one level from where it was previously.
+	 *
+	 */
+	public void goUpLevel() {
+		if (this.currentLevel < this.levels.size()) {
+			loadLevel(this.levels.get(this.currentLevel));
+		} else {
+			JOptionPane.showMessageDialog(null, "Cannot go up level. "
+					+ "You are at the highest level.");
+		}
+		this.currentLevel++;
+
+	}
+
+	/**
+	 * Has the game go down one level from where it was previously.
+	 *
+	 */
+	public void goDownLevel() {
+		if (this.currentLevel - 2 > 0) {
+			loadLevel(this.levels.get(this.currentLevel - 2));
+		} else {
+			JOptionPane.showMessageDialog(null, "Cannout go down level. "
+					+ "You are at the highest level.");
+		}
+		this.currentLevel--;
+	}
+
+	/**
+	 * returns true if the game is over
+	 *
+	 * @return
+	 */
+	public boolean isGameOver() {
+		return this.isGameOver;
+	}
+
+	/**
+	 * Returns true if the player has completed the level
+	 *
+	 * @return
+	 */
+	public boolean isLevelComplete() {
+		if (this.gems.size() == 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * returns the current score of the game
+	 *
+	 * @return
+	 */
+	public int getScore() {
+		return this.score;
+	}
+
+	/**
+	 * 
+	 * adds and empty object the the empty array.
+	 *
+	 * @param x
+	 *            object's x position
+	 * @param y
+	 *            object's y position
+	 */
+	public void addEmpty(int x, int y) {
+		this.empty.add(new Empty(x, y));
+
+		Dirt remove = new Dirt(0, 0);
+		for (int i = 0; i < this.Dirts.size(); i++) {
+			Dirt d = this.Dirts.get(i);
+			if (d.getX() == x && d.getY() == y) {
+				remove = d;
+			}
+		}
+		this.Dirts.remove(remove);
+
+	}
+
+	/**
+	 * returns true if the Nobbin turns into a Hobbin there is a very low change
+	 * of this happening
+	 *
+	 * @return
+	 */
+	private static boolean isNobbinToHobbin() {
+		if (Math.random() < .05) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * returns if the player has won the game or not
+	 *
+	 * @return
+	 */
+	public boolean isGameWon() {
+		return this.isGameWon;
+	}
+
+	/**
+	 * Returns the current level of the game
+	 *
+	 * @return
+	 */
+	public int getCurrentLevel() {
+		return this.currentLevel;
+	}
+
+	/**
+	 * Draw the the Digger game
+	 *
+	 * @param g
+	 *            -- Graphics
+	 */
+	public synchronized void drawOn(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+
+		for (Empty e : this.empty) {
+			g2.setColor(e.getColor());
+			g2.fillRect(e.getX() * RECTANGLE_WIDTH,
+					e.getY() * RECTANGLE_HEIGHT, RECTANGLE_WIDTH,
+					RECTANGLE_HEIGHT);
+
+		}
+
+		for (Dirt d : this.Dirts) {
+			g2.drawImage(d.getImage(), null, d.getX() * RECTANGLE_WIDTH,
+					d.getY() * RECTANGLE_HEIGHT);
+
+		}
+
+		for (Gem ge : this.gems) {
+			g2.drawImage(ge.getImage(), null, ge.getX() * RECTANGLE_WIDTH,
+					ge.getY() * RECTANGLE_HEIGHT);
+		}
+
+		for (Money m : this.money) {
+			if (!m.isOpen(this.empty)) {
+				g2.drawImage(m.getImage(), null, m.getX() * RECTANGLE_WIDTH,
+						m.getY() * RECTANGLE_HEIGHT);
+			} else {
+				g2.drawImage(m.getOpenMoneyImage(), null, m.getX()
+						* RECTANGLE_WIDTH, m.getY() * RECTANGLE_HEIGHT);
+				;
+			}
+		}
+
+		for (Nobbin n : this.nobbins) {
+			g2.drawImage(n.getImage(), null, n.getX() * RECTANGLE_WIDTH,
+					n.getY() * RECTANGLE_HEIGHT);
+
+		}
+
+		for (Hobbin h : this.hobbins) {
+			g2.drawImage(h.getImage(), null, h.getX() * RECTANGLE_WIDTH,
+					h.getY() * RECTANGLE_HEIGHT);
+
+		}
+
+		if (this.hero.weapon.fired) {
+			g2.setColor(this.hero.weapon.color);
+			g2.drawImage(this.hero.weapon.getImage(), null,
+					this.hero.weapon.getX() * RECTANGLE_WIDTH,
+					this.hero.weapon.getY() * RECTANGLE_HEIGHT);
+		}
+
+		g2.drawImage(this.hero.getImage(), null, this.hero.getX()
+				* RECTANGLE_WIDTH, this.hero.getY() * RECTANGLE_HEIGHT);
+	}
+}

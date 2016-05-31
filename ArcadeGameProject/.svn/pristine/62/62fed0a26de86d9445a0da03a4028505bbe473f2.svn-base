@@ -1,0 +1,58 @@
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class Hobbin extends Entity {
+	private int startingX;
+	private int startingY;
+	private int timer = 2;
+	private static final int SPEED = 7;
+
+	/**
+	 * Constucts a hobbin in the given position;
+	 *
+	 * @param statingPositoin
+	 */
+	public Hobbin(int startingX, int startingY) {
+		super(startingX, startingY);
+		this.startingX = startingX;
+		this.startingY = startingY;
+		this.color = Color.WHITE;
+		try {
+			this.image = ImageIO.read(new File(Main.path + "images/skeleton.jpg"));
+		} catch (IOException exception) {
+			System.out.println("ERROR: closed money image not found");
+		}
+	}
+
+	public void resetPositoin() {
+		this.x = this.startingX;
+		this.y = this.startingY;
+	}
+
+	public void updateHobbin(Hero hero) {
+		if (this.timer == 0) {
+			if (this.x < hero.getX()) {
+				this.x += 1;
+
+			} else if (this.x > hero.getX()) {
+				this.x -= 1;
+			} else {
+				if (this.y > hero.getY()) {
+					this.y--;
+
+				} else if (this.y < hero.getY()) {
+					this.y++;
+				}
+			}
+			this.timer = 2;
+
+		} else {
+			this.timer--;
+
+		}
+
+	}
+}

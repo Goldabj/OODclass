@@ -1,0 +1,19 @@
+package twovstwo;
+
+
+public class Game {
+	private Team team1;
+	private Team team2;
+	private String game;
+	
+	public Game(Team team1, Team team2) {
+		this.team1 = team1;
+		this.team2 = team2;
+		this.game = team1.getTeamPlayers() +  " vs. " + team2.getTeamPlayers();
+	}
+	
+	public void result(Team winningTeam, Team lossingTeam) {
+		winningTeam.winner(this.game);
+		lossingTeam.losser(this.game);
+	}
+}

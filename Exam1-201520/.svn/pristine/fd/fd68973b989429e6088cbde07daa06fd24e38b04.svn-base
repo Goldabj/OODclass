@@ -1,0 +1,83 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+
+import javax.swing.JComponent;
+
+
+/**
+ * Creates some sample spacehsips.
+ * 
+ * If you code correctly, your bars should match the ones given on the exam
+ * 
+ * For stage one, you'll have to delete some example code.
+ * 
+ * When you are ready to move to stage 1 & 2 & 3, you'll need to uncomment some lines
+ * 
+ * YOU SHOULD NOT NEED TO MODIFY THIS CLASS (much) in any signifigant way
+ * You shouldn't need to change the way DrawingSpaceship is used to make it work.
+ * You can add to paintComponent to add additional ships for your testing.
+ * 
+ * @author Buffalo
+ *
+ */
+@SuppressWarnings("serial")
+
+public class DrawingSpaceshipComponent extends JComponent {
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		
+		Graphics2D g2 = (Graphics2D) g;
+		
+		g2.setColor(Color.darkGray);
+		g2.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+		g2.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
+		
+		
+		//if you draw this correctly, the ship should appear in the center of the screen
+		DrawingSpaceship ship1 = new DrawingSpaceship(this.getWidth()/2,this.getHeight()/2);
+		ship1.drawOn(g2);
+		
+		//if you draw this correctly, just the corner of this ship will be visible off the top left
+		DrawingSpaceship ship2 = new DrawingSpaceship(0,0);
+		ship2.drawOn(g2);
+		
+		//Spaceships with rotation PART 2
+		
+		//if you draw this correctly, this ship will be on the upper right side of the screen
+		DrawingSpaceship ship3 = new DrawingSpaceship(500,150);
+		// just past 180 so should point a little bit left of straight down
+		ship3.setRotation(200);
+		ship3.drawOn(g2);
+		
+		//in the center of the upper left quadrant, pointing at the center
+		DrawingSpaceship ship4 = new DrawingSpaceship(this.getWidth()/4,this.getHeight()/4);
+		ship4.setRotation(90+45);
+		ship4.drawOn(g2);
+		
+		//on horizontal axis facing away from center
+		DrawingSpaceship ship5 = new DrawingSpaceship(this.getWidth()/4,this.getHeight()/2);
+		ship5.setRotation(270);
+		ship5.drawOn(g2);
+		
+		
+		//Spaceships with trails PART 3
+	
+
+		DrawingSpaceship ship6 = new DrawingSpaceship(50,50);
+		ship6.moveTo(new Point(50,400));
+		ship6.moveTo(new Point(320,420));
+		ship6.drawOn(g2);
+
+		DrawingSpaceship ship7 = new DrawingSpaceship(350,100);
+		ship7.moveTo(new Point(360,300));
+		ship7.moveTo(new Point(200,300));
+		ship7.moveTo(new Point(250,70));
+		ship7.drawOn(g2);
+
+
+	}
+
+}

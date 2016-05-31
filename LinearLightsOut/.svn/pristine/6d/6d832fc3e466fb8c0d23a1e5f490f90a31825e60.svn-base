@@ -1,0 +1,98 @@
+package linearLightsOut;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class LinearGameComponent extends JComponent {
+	protected JButton[] lightArray;
+
+	// TODO: draws the buttons on the frame-- new game button, quit button, lightButtons and adds actoins to them
+	public LinearGameComponent(int numberOfButtons, JFrame frame) {
+		// Create a Panel to put lights on it
+		final JPanel lightButtons = new JPanel();
+		frame.add(lightButtons, BorderLayout.NORTH);
+	
+		//initializes the light array to number of buttons 
+		this.lightArray = new JButton[numberOfButtons];
+		
+		// set the buttons to either X or O
+		for(int i = 0; i <= numberOfButtons; i++ ) {
+			JButton light = new JButton();
+			if(Math.random() <= 0.5) {
+				light.setText("X");
+			}else {
+				light.setText("O");
+			}
+			lightButtons.add(light); 
+			this.lightArray[i] = light;
+		}
+		/**
+		 * 
+		 * creates a action listener for JButtons that changes the 
+		 * label of the button to either X or O
+		 *
+		 * @author goldacbj.
+		 *         Created Jan 24, 2015.
+		 */
+		class LightListener implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				// Gets the button that was clicked
+				JButton lightClicked = (JButton) e.getSource();
+				
+				// Changes the buttons and the its neighbors if it has any next to it
+				for(int i = 0; i < LinearGameComponent.this.lightArray.length; i ++) {
+					if(lightClicked == LinearGameComponent.this.lightArray[i]) {
+						changeLight(LinearGameComponent.this.lightArray[i], lightButtons);
+						if(i > 0) {
+							changeLight(LinearGameComponent.this.lightArray[i-1], lightButtons);
+						}
+						if(i < LinearGameComponent.this.lightArray.length - 1) {
+							changeLight(LinearGameComponent.this.lightArray[i + 1], lightButtons);
+						}
+					}
+				}
+			}
+			
+		}
+		// Adds an actionListener to each light
+		for(int i = 0; i < this.lightArray.length; i++){
+			this.lightArray[i].addActionListener(new LightListener());
+		}
+		// create the panel and Buttons that create a new game and close game
+		JPanel operationButtons = new JPanel();
+		JButton newGameButton = new JButton("New Game");
+		operationButtons.add(newGameButton);
+		JButton exitButton = new JButton("Quit");
+		operationButtons.add(exitButton);
+		
+		// add actionListener to newGameButton
+		
+		// add actionListener to exit Button
+		
+	}
+	// TODO: draws the ligths on the frame -- buttons with X or O
+	
+	/**
+	 * 
+	 * changes the label of the button pressed, and changes the label
+	 * of the surrounding buttons 
+	 *
+	 * @param light -- JButton that is a light 
+	 * @param LightPanel -- a JPanel of only light buttons.
+	 */
+	public void changeLight(JButton light, JPanel LightPanel) {
+		
+	}
+	
+	// TODO: defines what the buttons do -- changes it and the neighbors labels
+	
+}

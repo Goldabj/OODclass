@@ -1,0 +1,21 @@
+
+public class UpdateHeroThread extends Thread implements Runnable {
+	private DiggerGame game;
+	private DiggerGameComponent gameComponent;
+	private ScorePanel scorePanel;
+	
+	public UpdateHeroThread(DiggerGame diggerGame, DiggerGameComponent diggerGameComponent, ScorePanel scorePanel) {
+		this.game = diggerGame;
+		this.gameComponent = diggerGameComponent;
+		this.scorePanel = scorePanel;
+	}
+	
+	@Override
+	public void run() {
+		this.game.updateGame();
+		this.gameComponent.repaint();
+		this.scorePanel.update();
+
+	}
+
+}
